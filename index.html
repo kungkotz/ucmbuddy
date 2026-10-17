@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UCM Buddy</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%230f9d8a%22%2F%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M32%206c-2.2%200-3.7%202.4-3.9%206.1l-.3%209.5-19.9%2011.6c-.7.4-1.1%201.1-1.1%201.9v3.6c0%20.8.7%201.3%201.4%201.1l19.4-5.8-.2%208.9-6.6%204.4c-.5.4-.8%201-.8%201.6v2.5c0%20.7.6%201.2%201.3%201l9-2.4%209%202.4c.7.2%201.3-.3%201.3-1v-2.5c0-.6-.3-1.2-.8-1.6l-6.6-4.4-.2-8.9%2019.4%205.8c.7.2%201.4-.3%201.4-1.1v-3.6c0-.8-.4-1.5-1.1-1.9L36.2%2021.6l-.3-9.5C35.7%208.4%2034.2%206%2032%206z%22%2F%3E%3C%2Fsvg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Crect%20width%3D%2264%22%20height%3D%2264%22%20rx%3D%2214%22%20fill%3D%22%230f9d8a%22%2F%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M32%206c-2.2%200-3.7%202.4-3.9%206.1l-.3%209.5-19.9%2011.6c-.7.4-1.1%201.1-1.1%201.9v3.6c0%20.8.7%201.3%201.4%201.1l19.4-5.8-.2%208.9-6.6%204.4c-.5.4-.8%201-.8%201.6v2.5c0%20.7.6%201.2%201.3%201l9-2.4%209%202.4c.7.2%201.3-.3%201.3-1v-2.5c0-.6-.3-1.2-.8-1.6l-6.6-4.4-.2-8.9%2019.4%205.8c.7.2%201.4-.3%201.4-1.1v-3.6c0-.8-.4-1.5-1.1-1.9L36.2%2021.6l-.3-9.5C35.7%208.4%2034.2%206%2032%206z%22%2F%3E%3C%2Fsvg%3E">
+<meta name="theme-color" content="#0f9d8a">
+<style>
+  /* ---------- Theme (same palette family as CPM Buddy) ---------- */
+  :root {
+    --bg: #0a0a0f; --bg-elev: #1c1c27; --card: #13131a;
+    --line: rgba(255,255,255,0.09); --line-hi: rgba(255,255,255,0.22);
+    --text: #f0f0f5; --text-dim: rgba(240,240,245,0.55);
+    --accent: #4f8fff; --accent-on: #ffffff;
+    --brand: #17b8a6;
+    --field-bg: #1c1c27; --field-border: rgba(255,255,255,0.14);
+    --error: #ff5c5c; --warning: #f5b13a; --good: #2ecc71;
+    --c-B: #a06cff; --c-C: #c8823c; --c-M: #3b82f6; --c-CSU: #17b8a6; --c-X: #9aa5b3; --x-on: #10141a;
+    --shadow: 0 10px 40px rgba(0,0,0,0.45);
+    color-scheme: dark;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg: #f0f3f1; --bg-elev: #e6ebe8; --card: #ffffff;
+      --line: rgba(20,40,80,0.12); --line-hi: rgba(20,40,80,0.28);
+      --text: #142850; --text-dim: rgba(20,40,80,0.6);
+      --accent: #142850; --accent-on: #ffffff; --brand: #0f8a7e;
+      --field-bg: #ffffff; --field-border: rgba(20,40,80,0.2);
+      --error: #b83232; --warning: #b57a10; --good: #137a4b;
+      --c-B: #7c3aed; --c-C: #a15c1e; --c-M: #1d5fd0; --c-CSU: #0f8a7e; --c-X: #55606e; --x-on: #ffffff;
+      --shadow: 0 10px 30px rgba(20,40,80,0.12);
+      color-scheme: light;
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #f0f3f1; --bg-elev: #e6ebe8; --card: #ffffff;
+    --line: rgba(20,40,80,0.12); --line-hi: rgba(20,40,80,0.28);
+    --text: #142850; --text-dim: rgba(20,40,80,0.6);
+    --accent: #142850; --accent-on: #ffffff; --brand: #0f8a7e;
+    --field-bg: #ffffff; --field-border: rgba(20,40,80,0.2);
+    --error: #b83232; --warning: #b57a10; --good: #137a4b;
+    --c-B: #7c3aed; --c-C: #a15c1e; --c-M: #1d5fd0; --c-CSU: #0f8a7e; --c-X: #55606e; --x-on: #ffffff;
+    --shadow: 0 10px 30px rgba(20,40,80,0.12);
+    color-scheme: light;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    background: var(--bg); color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 14px; line-height: 1.4; min-height: 100vh;
+  }
+  .mono { font-family: "SF Mono", "Menlo", "Consolas", monospace; font-variant-numeric: tabular-nums; }
+  .hidden { display: none !important; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  input, textarea, select { font: inherit; color: var(--text); }
+
+  /* ---------- Buttons ---------- */
+  .btn {
+    border: 1px solid var(--line-hi); background: var(--bg-elev); color: var(--text);
+    border-radius: 10px; padding: 9px 14px; font-weight: 600; font-size: 13px;
+    transition: transform .05s, filter .15s;
+  }
+  .btn:hover { filter: brightness(1.12); }
+  .btn:active { transform: scale(0.98); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-on); }
+  .btn.warn { color: var(--warning); border-color: color-mix(in srgb, var(--warning) 60%, transparent);
+              background: color-mix(in srgb, var(--warning) 12%, var(--card)); }
+  .btn.danger { color: var(--error); border-color: color-mix(in srgb, var(--error) 60%, transparent);
+                background: color-mix(in srgb, var(--error) 12%, var(--card)); }
+  .btn.small { padding: 6px 10px; font-size: 12px; border-radius: 8px; }
+
+  /* ---------- Home ---------- */
+  #home {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+  }
+  .home-card {
+    text-align: center; background: none; border: none; padding: 32px; border-radius: 24px;
+    transition: transform .15s;
+  }
+  .home-card:hover { transform: translateY(-2px); }
+  .home-card svg { width: 96px; height: 96px; filter: drop-shadow(0 12px 30px rgba(15,157,138,0.35)); }
+  .home-title { font-size: 40px; font-weight: 800; margin: 18px 0 6px; letter-spacing: -0.5px; }
+  .home-title .u { color: var(--brand); }
+  .home-sub { color: var(--text-dim); font-size: 15px; font-weight: 600; }
+  .home-tap { margin-top: 26px; font-size: 12px; letter-spacing: 2px; color: var(--text-dim); font-weight: 700; }
+
+  /* ---------- Wizard ---------- */
+  #wizard { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+  .wiz-card {
+    width: 100%; max-width: 340px; background: var(--card); border: 1px solid var(--line);
+    border-radius: 16px; padding: 18px; box-shadow: var(--shadow);
+  }
+  .wiz-chip {
+    display: inline-block; font-size: 10.5px; font-weight: 800; letter-spacing: .5px; color: var(--brand);
+    border: 1px solid color-mix(in srgb, var(--brand) 55%, transparent);
+    background: color-mix(in srgb, var(--brand) 12%, transparent);
+    padding: 3px 9px; border-radius: 999px; min-height: 21px;
+  }
+  .wiz-title { font-size: 17px; font-weight: 800; margin: 12px 0 2px; }
+  .wiz-hint { font-size: 12px; color: var(--text-dim); margin-bottom: 14px; }
+  .wiz-input {
+    width: 100%; text-align: center; font-size: 19px; font-weight: 800; letter-spacing: 1px;
+    text-transform: uppercase; padding: 11px; border-radius: 10px;
+    background: var(--field-bg); border: 1.5px solid var(--accent); outline: none;
+  }
+  .wiz-input.bad { border-color: var(--error); animation: shake .3s; }
+  .wiz-err { color: var(--error); font-size: 12px; min-height: 16px; margin-top: 6px; }
+  .wiz-btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+  .wiz-dots { display: flex; gap: 6px; justify-content: center; margin-top: 14px; }
+  .wiz-dots i { width: 6px; height: 6px; border-radius: 50%; background: var(--line-hi); }
+  .wiz-dots i.on { background: var(--accent); transform: scale(1.3); }
+  @keyframes shake { 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+
+  .cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .cal-head b { font-size: 13px; }
+  .cal-nav { width: 30px; height: 30px; border-radius: 8px; border: 1px solid var(--line-hi); background: var(--bg-elev); }
+  .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; text-align: center; }
+  .cal-dow { font-size: 10px; color: var(--text-dim); font-weight: 700; padding: 3px 0; }
+  .cal-day { padding: 7px 0; border-radius: 7px; font-size: 12.5px; font-weight: 700; border: none; background: none; }
+  .cal-day:hover { background: var(--bg-elev); }
+  .cal-day.muted { color: var(--text-dim); opacity: .45; }
+  .cal-day.sel { background: var(--accent); color: var(--accent-on); }
+  .cal-day.today:not(.sel) { box-shadow: inset 0 0 0 1.5px var(--line-hi); }
+
+  /* ---------- App ---------- */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+    padding: 14px 20px; border-bottom: 1px solid var(--line); background: var(--bg);
+    position: sticky; top: 0; z-index: 20;
+  }
+  .brand { font-size: 19px; font-weight: 800; letter-spacing: -.3px; cursor: pointer; }
+  .brand .u { color: var(--brand); }
+  .flight-sum {
+    margin-top: 3px; font-size: 13px; font-weight: 700; color: var(--text-dim);
+    background: none; border: none; padding: 0; text-align: left;
+  }
+  .flight-sum b { color: var(--text); }
+  .flight-sum:hover { color: var(--text); }
+  .flight-sum .edit { font-size: 11px; color: var(--accent); margin-left: 6px; }
+  .top-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .seg { display: inline-flex; border: 1px solid var(--line-hi); border-radius: 10px; overflow: hidden; background: var(--bg-elev); }
+  .seg button { border: none; background: none; padding: 7px 11px; font-size: 12px; font-weight: 700; color: var(--text-dim); }
+  .seg button.on { background: var(--accent); color: var(--accent-on); }
+
+  main {
+    max-width: 1180px; margin: 0 auto; padding: 20px;
+    display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 420px); gap: 20px; align-items: start;
+  }
+  @media (max-width: 900px) { main { grid-template-columns: 1fr; } }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+  .card + .card { margin-top: 16px; }
+  .card-title { font-size: 12px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: var(--text-dim); margin: 0 0 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+
+  /* Quick add */
+  .add-row { display: grid; grid-template-columns: auto minmax(0, 1fr) 76px; gap: 8px; align-items: end; }
+  .field label { display: block; font-size: 10.5px; font-weight: 800; letter-spacing: .6px; color: var(--text-dim); margin-bottom: 5px; text-transform: uppercase; }
+  .field input, .field textarea {
+    width: 100%; padding: 10px 11px; border-radius: 10px; background: var(--field-bg);
+    border: 1px solid var(--field-border); outline: none; text-transform: uppercase;
+  }
+  .field input:focus, .field textarea:focus { border-color: var(--accent); }
+  .field input::placeholder, .field textarea::placeholder { text-transform: none; letter-spacing: 0; font-weight: 500; opacity: .6; }
+  @media (max-width: 600px) {
+    .add-row { grid-template-columns: minmax(0, 1fr) 76px; }
+    .add-row .field:first-child { grid-column: 1 / -1; }
+    .type-seg { display: flex; }
+    .type-seg button { flex: 1; }
+  }
+  #num { font-size: 18px; font-weight: 800; letter-spacing: 1px; }
+  #owner { font-size: 16px; font-weight: 800; text-align: center; }
+  .type-seg button { padding: 12px 12px; font-size: 13px; }
+  .code-row { display: flex; gap: 8px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+  .code-btn {
+    min-width: 50px; padding: 9px 12px; border-radius: 10px; font-weight: 800; font-size: 13px;
+    border: 1px solid var(--line-hi); background: var(--bg-elev); color: var(--text-dim);
+  }
+  .code-btn .lbl { font-weight: 600; font-size: 11px; margin-left: 4px; opacity: .8; }
+  .code-btn.on { color: #fff; border-color: transparent; }
+  .code-btn[data-code="B"].on { background: var(--c-B); }
+  .code-btn[data-code="C"].on { background: var(--c-C); }
+  .code-btn[data-code="M"].on { background: var(--c-M); }
+  .code-btn[data-code="CSU"].on { background: var(--c-CSU); }
+  .code-btn[data-code="X"].on { background: var(--c-X); color: var(--x-on); }
+  .add-btn { margin-left: auto; padding: 10px 22px; }
+  .add-msg { min-height: 18px; margin-top: 8px; font-size: 12.5px; font-weight: 600; }
+  .add-msg.err { color: var(--error); }
+  .add-msg.ok { color: var(--good); }
+  .help { font-size: 12px; color: var(--text-dim); margin-top: 2px; }
+
+  details.bulk { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 12px; }
+  details.bulk summary { cursor: pointer; font-weight: 700; font-size: 13px; color: var(--text-dim); }
+  details.bulk summary:hover { color: var(--text); }
+  .bulk-body { margin-top: 10px; }
+  #bulk { min-height: 84px; resize: vertical; font-family: "SF Mono", "Menlo", "Consolas", monospace; }
+
+  /* List */
+  .counts { display: flex; gap: 6px; flex-wrap: wrap; }
+  .count-chip { font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 999px; border: 1px solid var(--line-hi); color: var(--text); letter-spacing: 0; text-transform: none; }
+  .count-chip i { font-style: normal; display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; vertical-align: 0; }
+  .uld-list { display: flex; flex-direction: column; gap: 6px; }
+  .uld-row {
+    display: grid; grid-template-columns: 28px minmax(0, 1fr) auto auto; gap: 10px; align-items: center;
+    padding: 7px 8px 7px 0; border-radius: 10px; border: 1px solid var(--line); background: var(--bg);
+    border-left: 4px solid var(--rowc, var(--line-hi));
+  }
+  .uld-row.flash { animation: flash 1.2s; }
+  @keyframes flash { 0% { background: color-mix(in srgb, var(--brand) 30%, var(--bg)); } 100% { background: var(--bg); } }
+  .uld-idx { text-align: right; font-size: 11px; color: var(--text-dim); font-weight: 700; }
+  .uld-id { font-size: 15px; font-weight: 800; letter-spacing: .5px; }
+  .uld-id .t { color: var(--text-dim); font-weight: 700; }
+  .uld-id .o { color: var(--text-dim); font-weight: 700; }
+  .code-sel {
+    padding: 6px 8px; border-radius: 8px; font-weight: 800; font-size: 12px;
+    background: var(--field-bg); border: 1px solid var(--field-border);
+  }
+  .del { border: none; background: none; color: var(--text-dim); font-size: 18px; width: 30px; height: 30px; border-radius: 8px; }
+  .del:hover { color: var(--error); background: color-mix(in srgb, var(--error) 12%, transparent); }
+  .empty-list { text-align: center; color: var(--text-dim); padding: 26px 10px; font-size: 13px; border: 1px dashed var(--line-hi); border-radius: 12px; }
+
+  /* Message */
+  .msg-card { position: sticky; top: 86px; }
+  #msg {
+    width: 100%; min-height: 240px; resize: vertical; padding: 12px; border-radius: 10px;
+    background: var(--field-bg); border: 1px solid var(--field-border); outline: none;
+    font-family: "SF Mono", "Menlo", "Consolas", monospace; font-size: 12.5px; line-height: 1.55;
+    text-transform: none; white-space: pre; overflow-x: auto;
+  }
+  .copy-btn { width: 100%; margin-top: 10px; padding: 13px; font-size: 14px; }
+  .msg-note { font-size: 12px; color: var(--text-dim); margin-top: 10px; }
+
+  /* Modal */
+  .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; padding: 20px; z-index: 50; }
+  .overlay.open { display: flex; }
+  .modal { width: 100%; max-width: 380px; background: var(--card); border: 1px solid var(--line-hi); border-radius: 14px; padding: 18px; box-shadow: var(--shadow); }
+  .modal h3 { margin: 0 0 8px; font-size: 16px; }
+  .modal p { margin: 0 0 16px; color: var(--text-dim); font-size: 13px; }
+  .modal .btns { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+</style>
+</head>
+<body>
+
+<!-- ================= HOME ================= -->
+<section id="home">
+  <button class="home-card" id="home-start" type="button" aria-label="Start a new UCM">
+    <svg viewBox="0 0 64 64" aria-hidden="true">
+      <rect width="64" height="64" rx="14" fill="#0f9d8a"/>
+      <path fill="#fff" d="M32 6c-2.2 0-3.7 2.4-3.9 6.1l-.3 9.5-19.9 11.6c-.7.4-1.1 1.1-1.1 1.9v3.6c0 .8.7 1.3 1.4 1.1l19.4-5.8-.2 8.9-6.6 4.4c-.5.4-.8 1-.8 1.6v2.5c0 .7.6 1.2 1.3 1l9-2.4 9 2.4c.7.2 1.3-.3 1.3-1v-2.5c0-.6-.3-1.2-.8-1.6l-6.6-4.4-.2-8.9 19.4 5.8c.7.2 1.4-.3 1.4-1.1v-3.6c0-.8-.4-1.5-1.1-1.9L36.2 21.6l-.3-9.5C35.7 8.4 34.2 6 32 6z"/>
+    </svg>
+    <div class="home-title"><span class="u">UCM</span> Buddy</div>
+    <div class="home-sub">Create ULD control messages</div>
+    <div class="home-tap">TAP TO BEGIN</div>
+  </button>
+</section>
+
+<!-- ================= WIZARD ================= -->
+<section id="wizard" class="hidden">
+  <div class="wiz-card">
+    <span class="wiz-chip" id="wiz-chip"></span>
+    <div class="wiz-title" id="wiz-title"></div>
+    <div class="wiz-hint" id="wiz-hint"></div>
+    <div id="wiz-field"></div>
+    <div class="wiz-err" id="wiz-err"></div>
+    <div class="wiz-btns">
+      <button class="btn" type="button" id="wiz-back">Back</button>
+      <button class="btn primary" type="button" id="wiz-next">Next</button>
+    </div>
+    <div class="wiz-dots" id="wiz-dots"></div>
+  </div>
+</section>
+
+<!-- ================= APP ================= -->
+<section id="app" class="hidden">
+  <header class="topbar">
+    <div>
+      <div class="brand" id="brand" title="Back to start"><span class="u">UCM</span> Buddy</div>
+      <button class="flight-sum" id="flight-sum" type="button" title="Edit flight details"></button>
+    </div>
+    <div class="top-actions">
+      <button class="btn small warn" type="button" id="btn-clear">Clear list</button>
+      <button class="btn small danger" type="button" id="btn-reset">Start over</button>
+      <div class="seg" id="theme-seg">
+        <button type="button" data-theme="auto">Auto</button>
+        <button type="button" data-theme="dark">Dark</button>
+        <button type="button" data-theme="light">Light</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div>
+      <div class="card">
+        <div class="card-title">Add ULD</div>
+        <div class="add-row">
+          <div class="field">
+            <label>Type</label>
+            <div class="seg type-seg" id="type-seg">
+              <button type="button" data-type="AKE">AKE</button>
+              <button type="button" data-type="PMC">PMC</button>
+              <button type="button" data-type="PLA">PLA</button>
+            </div>
+          </div>
+          <div class="field">
+            <label for="num">ULD number</label>
+            <input id="num" class="mono" autocomplete="off" spellcheck="false" placeholder="e.g. 28947" inputmode="text">
+          </div>
+          <div class="field">
+            <label for="owner">Owner</label>
+            <input id="owner" class="mono" autocomplete="off" spellcheck="false" maxlength="3">
+          </div>
+        </div>
+        <div class="code-row" id="code-row">
+          <button type="button" class="code-btn" data-code="B">B<span class="lbl">Bags</span></button>
+          <button type="button" class="code-btn" data-code="C">C<span class="lbl">Cargo</span></button>
+          <button type="button" class="code-btn" data-code="M">M<span class="lbl">Mail</span></button>
+          <button type="button" class="code-btn" data-code="CSU">CSU<span class="lbl">Catering</span></button>
+          <button type="button" class="code-btn" data-code="X">X<span class="lbl">Empty</span></button>
+          <button type="button" class="btn primary add-btn" id="btn-add">Add</button>
+        </div>
+        <div class="add-msg" id="add-msg"></div>
+        <div class="help">Press <b>Enter</b> to add — type and content stay selected, so you can key the next number straight away. A full ID like <span class="mono">AKH12345CA</span> also works.</div>
+
+        <details class="bulk" id="bulk-box">
+          <summary>Add several at once (e.g. a stack of empties)</summary>
+          <div class="bulk-body">
+            <div class="field">
+              <label for="bulk">ULD numbers — separated by spaces, commas or new lines</label>
+              <textarea id="bulk" spellcheck="false" placeholder="50852 53434 53470&#10;or PMC50852CA PMC53434CA"></textarea>
+            </div>
+            <div class="help" id="bulk-help"></div>
+            <div style="margin-top:10px;"><button type="button" class="btn primary" id="btn-bulk">Add all</button></div>
+          </div>
+        </details>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span id="list-title">ULDs</span><span class="counts" id="counts"></span></div>
+        <div class="uld-list" id="list"></div>
+      </div>
+    </div>
+
+    <div class="card msg-card">
+      <div class="card-title">Message</div>
+      <textarea id="msg" readonly spellcheck="false"></textarea>
+      <button type="button" class="btn primary copy-btn" id="btn-copy">Copy message</button>
+      <div class="msg-note">ULDs are sorted alphanumerically automatically. In Notis: clear the top row, then paste with <b>Alt + I</b>.</div>
+    </div>
+  </main>
+</section>
+
+<!-- ================= MODAL ================= -->
+<div class="overlay" id="overlay">
+  <div class="modal" role="dialog" aria-modal="true">
+    <h3 id="m-title"></h3>
+    <p id="m-text"></p>
+    <div class="btns">
+      <button type="button" class="btn" id="m-cancel">Cancel</button>
+      <button type="button" class="btn" id="m-ok">OK</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------------------------------------------------------------
+  // Message format (Air China UCM as sent from CPH):
+  //   UCM
+  //   CA878/16OCT.B1083.CPH
+  //   OUT
+  //   .AKE27346CA//B.AKE27719CA//B.AKE28722CA//B
+  //   ...three ULDs per line, sorted alphanumerically by full ULD id.
+  // No weights, no positions, destination field left empty ("//").
+  // ---------------------------------------------------------------
+
+  const STORE = 'ucmbuddy-v1';
+  const THEME_KEY = 'ucmbuddy-theme';
+  const MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+  const MONTH_NAMES = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const CODES = ['B', 'C', 'M', 'CSU', 'X'];
+  const CODE_NAMES = { B: 'Bags', C: 'Cargo', M: 'Mail', CSU: 'Catering', X: 'Empty' };
+  const PER_LINE = 3;
+
+  const $ = id => document.getElementById(id);
+
+  // ---------- storage (wrapped: private windows can throw) ----------
+  function load(key) { try { return JSON.parse(localStorage.getItem(key)); } catch (e) { return null; } }
+  function save(key, v) { try { localStorage.setItem(key, JSON.stringify(v)); } catch (e) {} }
+  function drop(key) { try { localStorage.removeItem(key); } catch (e) {} }
+
+  function freshState() {
+    return { flight: '', reg: '', station: 'CPH', date: todayISO(), entries: [],
+             addType: 'AKE', addCode: 'B', addOwner: '', ownerAuto: true, started: false };
+  }
+  let S = Object.assign(freshState(), load(STORE) || {});
+  function persist() { save(STORE, S); }
+
+  // ---------- helpers ----------
+  function todayISO() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+  function parseISO(s) { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); }
+  function clean(s) { return String(s || '').toUpperCase().replace(/[\s\-]/g, ''); }
+
+  // Flight: 2-character airline designator + 1-4 digits + optional suffix letter.
+  const FLIGHT_RE = /^([A-Z]{2}|[A-Z][0-9]|[0-9][A-Z])0*([0-9]{1,4})([A-Z]?)$/;
+  function parseFlight(f) {
+    const m = clean(f).match(FLIGHT_RE);
+    return m ? { airline: m[1], number: m[2], suffix: m[3] } : null;
+  }
+  // Header form drops leading zeros: CA0878 -> CA878
+  function headerFlight(f) { const p = parseFlight(f); return p ? p.airline + p.number + p.suffix : clean(f); }
+  function airlineOf(f) { const p = parseFlight(f); return p ? p.airline : ''; }
+
+  function dateCode(iso) { const d = parseISO(iso); return String(d.getDate()).padStart(2, '0') + MONTHS[d.getMonth()]; }
+  function prettyDate(iso) { const d = parseISO(iso); return d.getDate() + ' ' + MONTH_NAMES[d.getMonth()].slice(0, 3) + ' ' + d.getFullYear(); }
+
+  const uldId = e => e.type + e.num + e.owner;
+  // Alphanumeric order: AA001 < AA002 < AB001. Numbers compare by value, so
+  // AKE9999 sorts before AKE10000 if lengths ever differ.
+  const byId = (a, b) => uldId(a).localeCompare(uldId(b), 'en', { numeric: true });
+
+  // ---------- the message ----------
+  function buildMessage() {
+    const lines = ['UCM'];
+    lines.push(headerFlight(S.flight) + '/' + dateCode(S.date) + '.' + clean(S.reg) + '.' + clean(S.station));
+    lines.push('OUT');
+    const sorted = S.entries.slice().sort(byId);
+    if (!sorted.length) { lines.push('N'); return lines.join('\n'); }
+    for (let i = 0; i < sorted.length; i += PER_LINE) {
+      lines.push(sorted.slice(i, i + PER_LINE).map(e => '.' + uldId(e) + '//' + e.code).join(''));
+    }
+    return lines.join('\n');
+  }
+
+  // ---------- theme ----------
+  function applyTheme(t) {
+    if (t === 'dark' || t === 'light') document.documentElement.setAttribute('data-theme', t);
+    else document.documentElement.removeAttribute('data-theme');
+    document.querySelectorAll('#theme-seg button').forEach(b => b.classList.toggle('on', b.dataset.theme === (t || 'auto')));
+  }
+  let theme = load(THEME_KEY) || 'auto';
+  applyTheme(theme);
+  document.querySelectorAll('#theme-seg button').forEach(b => b.addEventListener('click', () => {
+    theme = b.dataset.theme; save(THEME_KEY, theme); applyTheme(theme);
+  }));
+
+  // ---------- modal ----------
+  let modalResolve = null;
+  function confirmBox(title, text, okLabel, tone) {
+    $('m-title').textContent = title;
+    $('m-text').textContent = text;
+    const ok = $('m-ok');
+    ok.textContent = okLabel;
+    ok.className = 'btn ' + (tone === 'danger' ? 'danger' : tone === 'warn' ? 'warn' : 'primary');
+    $('overlay').classList.add('open');
+    ok.focus();
+    return new Promise(r => { modalResolve = r; });
+  }
+  function closeModal(v) { $('overlay').classList.remove('open'); if (modalResolve) { modalResolve(v); modalResolve = null; } }
+  $('m-ok').addEventListener('click', () => closeModal(true));
+  $('m-cancel').addEventListener('click', () => closeModal(false));
+  $('overlay').addEventListener('click', e => { if (e.target === $('overlay')) closeModal(false); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('overlay').classList.contains('open')) closeModal(false); });
+
+  // ---------- screens ----------
+  function show(id) { ['home', 'wizard', 'app'].forEach(s => $(s).classList.toggle('hidden', s !== id)); }
+
+  // ---------- wizard ----------
+  const STEPS = [
+    { key: 'flight', title: 'Flight number', hint: 'e.g. CA878 — press Enter to continue',
+      check: v => parseFlight(v) ? '' : 'Enter a flight number like CA878' },
+    { key: 'reg', title: 'Registration', hint: 'e.g. B-1083 — with or without the hyphen',
+      check: v => /^[A-Z0-9]{3,8}$/.test(clean(v)) ? '' : 'Enter the aircraft registration' },
+    { key: 'station', title: 'Station', hint: 'The station sending the UCM — usually CPH',
+      check: v => /^[A-Z]{3}$/.test(clean(v)) ? '' : 'Enter a 3-letter station code' },
+    { key: 'date', title: 'Date', hint: 'Today is preselected — change it if needed', check: () => '' }
+  ];
+  let step = 0, calMonth = null;
+
+  function chipText() {
+    return [headerFlight(S.flight), clean(S.reg), clean(S.station)].filter(Boolean).join(' · ');
+  }
+
+  function renderWizard() {
+    const st = STEPS[step];
+    $('wiz-chip').textContent = chipText();
+    $('wiz-chip').style.visibility = chipText() ? 'visible' : 'hidden';
+    $('wiz-title').textContent = st.title;
+    $('wiz-hint').textContent = st.hint;
+    $('wiz-err').textContent = '';
+    $('wiz-dots').innerHTML = STEPS.map((_, i) => '<i class="' + (i === step ? 'on' : '') + '"></i>').join('');
+    $('wiz-next').textContent = step === STEPS.length - 1 ? 'Done' : 'Next';
+    const f = $('wiz-field');
+    if (st.key === 'date') {
+      const sel = parseISO(S.date);
+      if (!calMonth) calMonth = new Date(sel.getFullYear(), sel.getMonth(), 1);
+      f.innerHTML = calendarHTML();
+      f.querySelectorAll('[data-day]').forEach(b => b.addEventListener('click', () => {
+        S.date = b.dataset.day; persist();
+        const d = parseISO(S.date); calMonth = new Date(d.getFullYear(), d.getMonth(), 1);
+        renderWizard();
+      }));
+      $('cal-prev').addEventListener('click', () => { calMonth.setMonth(calMonth.getMonth() - 1); renderWizard(); });
+      $('cal-next').addEventListener('click', () => { calMonth.setMonth(calMonth.getMonth() + 1); renderWizard(); });
+      $('wiz-next').focus();
+    } else {
+      f.innerHTML = '<input class="wiz-input" id="wiz-input" autocomplete="off" spellcheck="false">';
+      const inp = $('wiz-input');
+      inp.value = S[st.key] || '';
+      // stopPropagation: otherwise the same Enter also reaches the document-level
+      // date-step handler once the step advances, skipping the date step.
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); wizNext(); } });
+      inp.addEventListener('input', () => inp.classList.remove('bad'));
+      setTimeout(() => { inp.focus(); inp.select(); }, 0);
+    }
+  }
+
+  function calendarHTML() {
+    const y = calMonth.getFullYear(), m = calMonth.getMonth();
+    const first = new Date(y, m, 1);
+    const offset = (first.getDay() + 6) % 7; // Monday first
+    const start = new Date(y, m, 1 - offset);
+    const today = todayISO();
+    let h = '<div class="cal-head"><button type="button" class="cal-nav" id="cal-prev" aria-label="Previous month">‹</button>' +
+            '<b>' + MONTH_NAMES[m] + ' ' + y + '</b>' +
+            '<button type="button" class="cal-nav" id="cal-next" aria-label="Next month">›</button></div><div class="cal-grid">';
+    ['M','T','W','T','F','S','S'].forEach(d => h += '<div class="cal-dow">' + d + '</div>');
+    for (let i = 0; i < 42; i++) {
+      const d = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
+      const iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+      const cls = ['cal-day'];
+      if (d.getMonth() !== m) cls.push('muted');
+      if (iso === S.date) cls.push('sel');
+      if (iso === today) cls.push('today');
+      h += '<button type="button" class="' + cls.join(' ') + '" data-day="' + iso + '">' + d.getDate() + '</button>';
+    }
+    return h + '</div>';
+  }
+
+  function wizNext() {
+    const st = STEPS[step];
+    if (st.key !== 'date') {
+      const inp = $('wiz-input');
+      const v = clean(inp.value);
+      const err = st.check(v);
+      if (err) { $('wiz-err').textContent = err; inp.classList.remove('bad'); void inp.offsetWidth; inp.classList.add('bad'); return; }
+      if (st.key === 'flight') {
+        const oldAir = airlineOf(S.flight), newAir = airlineOf(v);
+        // Follow the airline on ULDs still carrying the old automatic owner code.
+        if (oldAir && newAir && oldAir !== newAir) {
+          S.entries.forEach(e => { if (e.owner === oldAir) e.owner = newAir; });
+          if (S.ownerAuto || S.addOwner === oldAir) S.addOwner = newAir;
+        }
+        if (!S.addOwner || S.ownerAuto) S.addOwner = newAir;
+      }
+      S[st.key] = v;
+      persist();
+    }
+    if (step < STEPS.length - 1) { step++; renderWizard(); }
+    else { S.started = true; persist(); openApp(); }
+  }
+  $('wiz-next').addEventListener('click', wizNext);
+  $('wiz-back').addEventListener('click', () => {
+    if (step > 0) { step--; renderWizard(); }
+    else if (S.started) openApp();
+    else show('home');
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !$('wizard').classList.contains('hidden') && STEPS[step].key === 'date'
+        && !$('overlay').classList.contains('open')) { e.preventDefault(); wizNext(); }
+  });
+
+  function startWizard(at) { step = at || 0; calMonth = null; show('wizard'); renderWizard(); }
+  $('home-start').addEventListener('click', () => startWizard(0));
+
+  // ---------- app ----------
+  function openApp() { show('app'); renderApp(); setTimeout(() => $('num').focus(), 0); }
+
+  function renderApp() {
+    $('flight-sum').innerHTML = '<b>' + esc(headerFlight(S.flight)) + '</b> · ' + esc(clean(S.reg)) + ' · ' +
+      esc(clean(S.station)) + ' · ' + esc(prettyDate(S.date)) + '<span class="edit">Edit</span>';
+    document.querySelectorAll('#type-seg button').forEach(b => b.classList.toggle('on', b.dataset.type === S.addType));
+    document.querySelectorAll('#code-row .code-btn').forEach(b => b.classList.toggle('on', b.dataset.code === S.addCode));
+    if (document.activeElement !== $('owner')) $('owner').value = S.addOwner || airlineOf(S.flight);
+    renderList();
+    renderBulkHelp();
+    $('msg').value = buildMessage();
+  }
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c])); }
+
+  let flashId = null;
+  function renderList() {
+    const sorted = S.entries.slice().sort(byId);
+    $('list-title').textContent = sorted.length ? 'ULDs (' + sorted.length + ')' : 'ULDs';
+    const counts = {};
+    sorted.forEach(e => counts[e.code] = (counts[e.code] || 0) + 1);
+    $('counts').innerHTML = CODES.filter(c => counts[c]).map(c =>
+      '<span class="count-chip"><i style="background:var(--c-' + c + ')"></i>' + counts[c] + ' ' + CODE_NAMES[c] + '</span>').join('');
+    if (!sorted.length) {
+      $('list').innerHTML = '<div class="empty-list">No ULDs yet — add the first one above.</div>';
+      return;
+    }
+    $('list').innerHTML = sorted.map((e, i) => {
+      const id = uldId(e);
+      return '<div class="uld-row' + (id === flashId ? ' flash' : '') + '" style="--rowc:var(--c-' + e.code + ')">' +
+        '<span class="uld-idx">' + (i + 1) + '</span>' +
+        '<span class="uld-id mono"><span class="t">' + esc(e.type) + '</span>' + esc(e.num) + '<span class="o">' + esc(e.owner) + '</span></span>' +
+        '<select class="code-sel" data-id="' + esc(id) + '" aria-label="Content of ' + esc(id) + '">' +
+          CODES.map(c => '<option value="' + c + '"' + (c === e.code ? ' selected' : '') + '>' + c + ' · ' + CODE_NAMES[c] + '</option>').join('') +
+        '</select>' +
+        '<button type="button" class="del" data-id="' + esc(id) + '" aria-label="Remove ' + esc(id) + '">×</button>' +
+      '</div>';
+    }).join('');
+    flashId = null;
+    $('list').querySelectorAll('.code-sel').forEach(s => s.addEventListener('change', () => {
+      const e = S.entries.find(x => uldId(x) === s.dataset.id);
+      if (e) { e.code = s.value; persist(); renderApp(); }
+    }));
+    $('list').querySelectorAll('.del').forEach(b => b.addEventListener('click', () => {
+      S.entries = S.entries.filter(x => uldId(x) !== b.dataset.id);
+      persist(); renderApp();
+    }));
+  }
+
+  // Parse one typed token into a ULD, using the selected type/owner for bare numbers.
+  // Accepts "28947", "PMC50852", "PMC50852CA", "AKH12345CA".
+  function parseToken(tok) {
+    const t = clean(tok);
+    if (!t) return { error: 'empty' };
+    const owner = clean($('owner').value) || airlineOf(S.flight);
+    let m = t.match(/^([0-9]{3,5})$/);
+    if (m) return { uld: { type: S.addType, num: m[1], owner: owner } };
+    m = t.match(/^([A-Z]{3})([0-9]{3,5})([A-Z0-9]{2,3})?$/);
+    if (m) return { uld: { type: m[1], num: m[2], owner: m[3] || owner } };
+    return { error: '“' + tok + '” is not a ULD number' };
+  }
+
+  function setMsg(text, kind) { const el = $('add-msg'); el.textContent = text; el.className = 'add-msg ' + (kind || ''); }
+
+  function addOne() {
+    const raw = $('num').value;
+    if (!clean(raw)) { setMsg('Type a ULD number first.', 'err'); $('num').focus(); return; }
+    const owner = clean($('owner').value);
+    if (!/^[A-Z0-9]{2,3}$/.test(owner)) { setMsg('Owner code should be 2–3 characters, e.g. CA.', 'err'); $('owner').focus(); return; }
+    const p = parseToken(raw);
+    if (p.error) { setMsg(p.error + '.', 'err'); return; }
+    const u = p.uld; u.code = S.addCode;
+    const id = uldId(u);
+    if (S.entries.some(x => uldId(x) === id)) { setMsg(id + ' is already in the list.', 'err'); $('num').select(); return; }
+    S.entries.push(u);
+    flashId = id;
+    persist();
+    $('num').value = '';
+    setMsg('Added ' + id + ' · ' + CODE_NAMES[u.code], 'ok');
+    renderApp();
+    $('num').focus();
+  }
+
+  function renderBulkHelp() {
+    $('bulk-help').innerHTML = 'Bare numbers become <b>' + esc(S.addType) + '</b> · owner <b>' +
+      esc(clean($('owner').value) || airlineOf(S.flight)) + '</b> · <b>' + esc(S.addCode) + ' ' + CODE_NAMES[S.addCode] +
+      '</b> — set these above first. Full IDs keep their own type and owner.';
+  }
+
+  function addBulk() {
+    const toks = $('bulk').value.split(/[\s,;.]+/).filter(Boolean);
+    if (!toks.length) { setMsg('Paste some ULD numbers first.', 'err'); return; }
+    const owner = clean($('owner').value);
+    if (!/^[A-Z0-9]{2,3}$/.test(owner)) { setMsg('Owner code should be 2–3 characters, e.g. CA.', 'err'); return; }
+    let added = 0; const dupes = [], bad = [];
+    toks.forEach(t => {
+      const p = parseToken(t);
+      if (p.error) { bad.push(t); return; }
+      const u = p.uld; u.code = S.addCode;
+      const id = uldId(u);
+      if (S.entries.some(x => uldId(x) === id)) { dupes.push(id); return; }
+      S.entries.push(u); added++;
+    });
+    persist();
+    const parts = ['Added ' + added];
+    if (dupes.length) parts.push(dupes.length + ' already in the list');
+    if (bad.length) parts.push('skipped: ' + bad.join(', '));
+    setMsg(parts.join(' · '), bad.length || (!added && dupes.length) ? 'err' : 'ok');
+    if (!bad.length) $('bulk').value = '';
+    renderApp();
+  }
+
+  $('btn-add').addEventListener('click', addOne);
+  $('num').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addOne(); } });
+  $('num').addEventListener('input', () => { if ($('add-msg').classList.contains('err')) setMsg(''); });
+  $('btn-bulk').addEventListener('click', addBulk);
+  $('owner').addEventListener('input', () => {
+    const v = clean($('owner').value);
+    S.addOwner = v; S.ownerAuto = (v === airlineOf(S.flight)); persist(); renderBulkHelp();
+  });
+  $('owner').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('num').focus(); } });
+  document.querySelectorAll('#type-seg button').forEach(b => b.addEventListener('click', () => {
+    S.addType = b.dataset.type; persist(); renderApp(); $('num').focus();
+  }));
+  document.querySelectorAll('#code-row .code-btn').forEach(b => b.addEventListener('click', () => {
+    S.addCode = b.dataset.code; persist(); renderApp(); $('num').focus();
+  }));
+
+  $('btn-copy').addEventListener('click', async () => {
+    const txt = buildMessage();
+    let ok = false;
+    try { await navigator.clipboard.writeText(txt); ok = true; }
+    catch (e) {
+      const ta = $('msg'); ta.removeAttribute('readonly'); ta.select();
+      try { ok = document.execCommand('copy'); } catch (e2) {}
+      ta.setAttribute('readonly', ''); window.getSelection().removeAllRanges();
+    }
+    const b = $('btn-copy');
+    b.textContent = ok ? 'Copied ✓' : 'Copy failed — select the text and copy manually';
+    setTimeout(() => { b.textContent = 'Copy message'; }, 1600);
+  });
+
+  $('flight-sum').addEventListener('click', () => startWizard(0));
+  $('brand').addEventListener('click', () => show('home'));
+
+  $('btn-clear').addEventListener('click', async () => {
+    if (!S.entries.length) return;
+    if (await confirmBox('Clear the list?', 'All ' + S.entries.length + ' ULDs will be removed. The flight details stay.', 'Clear list', 'warn')) {
+      S.entries = []; persist(); setMsg(''); renderApp();
+    }
+  });
+  $('btn-reset').addEventListener('click', async () => {
+    if (await confirmBox('Start over?', 'This erases the flight details and every ULD.', 'Start over', 'danger')) {
+      const keepTheme = theme;
+      drop(STORE); S = freshState(); persist(); save(THEME_KEY, keepTheme);
+      setMsg(''); $('bulk').value = '';
+      startWizard(0);
+    }
+  });
+
+  // ---------- boot ----------
+  if (S.started && parseFlight(S.flight)) openApp(); else show('home');
+
+  // Exposed for testing.
+  window.UCM = { buildMessage, state: () => S, parseFlight, headerFlight };
+})();
+</script>
+</body>
+</html>

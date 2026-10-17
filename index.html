@@ -195,7 +195,51 @@
   details.bulk summary { cursor: pointer; font-weight: 700; font-size: 13px; color: var(--text-dim); }
   details.bulk summary:hover { color: var(--text); }
   .bulk-body { margin-top: 10px; }
-  #bulk { min-height: 84px; resize: vertical; font-family: "SF Mono", "Menlo", "Consolas", monospace; }
+  /* Headings and rows share one grid so the columns line up. */
+  #group-list { display: grid; grid-template-columns: max-content max-content 84px 30px; justify-content: start; gap: 6px 10px; align-items: center; }
+  .group-row { display: contents; }
+  .gh { font-size: 10.5px; font-weight: 800; letter-spacing: .6px; color: var(--text-dim); text-transform: uppercase; }
+  .gh.c { text-align: center; }
+  .seg.mini button { padding: 8px 10px; font-size: 12.5px; }
+  .seg.codes button[data-code="B"].on { background: var(--c-B); color: #fff; }
+  .seg.codes button[data-code="C"].on { background: var(--c-C); color: #fff; }
+  .seg.codes button[data-code="M"].on { background: var(--c-M); color: #fff; }
+  .seg.codes button[data-code="CSU"].on { background: var(--c-CSU); color: #fff; }
+  .seg.codes button[data-code="X"].on { background: var(--c-X); color: var(--x-on); }
+  .g-count {
+    width: 100%; padding: 8px 6px; border-radius: 10px; background: var(--field-bg); border: 1px solid var(--field-border);
+    outline: none; text-align: center; font-size: 15px; font-weight: 800;
+  }
+  .g-count:focus { border-color: var(--accent); }
+  .add-group { margin-top: 10px; }
+  @media (max-width: 600px) {
+    #group-list { display: block; }
+    .gh { display: none; }
+    .group-row { display: grid; grid-template-columns: max-content minmax(0, 1fr) 30px; gap: 8px; align-items: center; padding: 8px; border: 1px solid var(--line); border-radius: 12px; }
+    .group-row + .group-row { margin-top: 6px; }
+    .group-row .seg.codes { grid-column: 1 / -1; grid-row: 2; display: flex; }
+    .group-row .seg.codes button { flex: 1; }
+  }
+  .bulk-group { margin-top: 14px; }
+  .bg-title { font-size: 12.5px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 7px; }
+  .bg-title i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+  .bulk-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(168px, 1fr)); gap: 8px; }
+  .bulk-cell {
+    display: grid; grid-template-columns: 22px auto minmax(0, 1fr) auto; align-items: center; gap: 4px;
+    background: var(--field-bg); border: 1px solid var(--field-border); border-radius: 10px; padding: 0 9px 0 6px;
+  }
+  .bulk-cell:focus-within { border-color: var(--accent); }
+  .bulk-cell.bad { border-color: var(--error); background: color-mix(in srgb, var(--error) 8%, var(--field-bg)); }
+  .bulk-cell .n { font-size: 10.5px; font-weight: 800; color: var(--text-dim); text-align: right; }
+  .bulk-cell .pre, .bulk-cell .suf { font-size: 13px; font-weight: 700; color: var(--text-dim); }
+  .bulk-cell input {
+    border: none; background: none; outline: none; padding: 9px 0; width: 100%;
+    font-size: 15px; font-weight: 800; letter-spacing: .5px;
+  }
+  .bulk-cell input::placeholder { color: var(--text-dim); opacity: .45; font-weight: 600; letter-spacing: 0; }
+  .bulk-foot { display: flex; align-items: center; gap: 12px; margin-top: 14px; flex-wrap: wrap; }
+  .bulk-foot .add-msg { margin: 0; flex: 1; min-width: 180px; }
+  .bulk-empty { margin-top: 12px; font-size: 12.5px; color: var(--text-dim); }
 
   /* List */
   .counts { display: flex; gap: 6px; flex-wrap: wrap; }
@@ -324,14 +368,16 @@
         <div class="help">Press <b>Enter</b> to add — type and content stay selected, so you can key the next number straight away. A full ID like <span class="mono">AKH12345CA</span> also works.</div>
 
         <details class="bulk" id="bulk-box">
-          <summary>Add several at once (e.g. a stack of empties)</summary>
+          <summary>Add several at once — say how many of each type, then key the numbers</summary>
           <div class="bulk-body">
-            <div class="field">
-              <label for="bulk">ULD numbers — separated by spaces, commas or new lines</label>
-              <textarea id="bulk" spellcheck="false" placeholder="50852 53434 53470&#10;or PMC50852CA PMC53434CA"></textarea>
+            <div id="group-list"></div>
+            <button type="button" class="btn small add-group" id="btn-add-group">+ Add a group</button>
+            <div id="bulk-fields"></div>
+            <div class="bulk-empty" id="bulk-empty">Set how many, and a field appears for each ULD number. Enter jumps to the next field.</div>
+            <div class="bulk-foot">
+              <button type="button" class="btn primary" id="btn-bulk">Add all</button>
+              <div class="add-msg" id="bulk-msg"></div>
             </div>
-            <div class="help" id="bulk-help"></div>
-            <div style="margin-top:10px;"><button type="button" class="btn primary" id="btn-bulk">Add all</button></div>
           </div>
         </details>
       </div>
@@ -394,7 +440,8 @@
 
   function freshState() {
     return { flight: '', reg: '', station: 'CPH', date: todayISO(), entries: [],
-             addType: 'AKE', addCode: 'B', addOwner: '', ownerAuto: true, started: false };
+             addType: 'AKE', addCode: 'B', addOwner: '', ownerAuto: true, started: false,
+             groups: [{ type: 'AKE', code: 'B', nums: [] }] };
   }
   let S = Object.assign(freshState(), load(STORE) || {});
   function persist() { save(STORE, S); }
@@ -594,7 +641,7 @@
     document.querySelectorAll('#code-row .code-btn').forEach(b => b.classList.toggle('on', b.dataset.code === S.addCode));
     if (document.activeElement !== $('owner')) $('owner').value = S.addOwner || airlineOf(S.flight);
     renderList();
-    renderBulkHelp();
+    renderBulk();
     $('msg').value = buildMessage();
   }
 
@@ -668,34 +715,164 @@
     $('num').focus();
   }
 
-  function renderBulkHelp() {
-    $('bulk-help').innerHTML = 'Bare numbers become <b>' + esc(S.addType) + '</b> · owner <b>' +
-      esc(clean($('owner').value) || airlineOf(S.flight)) + '</b> · <b>' + esc(S.addCode) + ' ' + CODE_NAMES[S.addCode] +
-      '</b> — set these above first. Full IDs keep their own type and owner.';
+  // ---------- add several at once ----------
+  // Groups of type + content + how many (e.g. AKE·B ×8, PMC·C ×2, PMC·X ×10).
+  // One field per ULD; Enter jumps to the next field, Enter on the last adds all.
+  const MAX_GROUP = 40;
+  const BULK_NUM = /^[0-9]{3,5}$/;
+  if (!Array.isArray(S.groups) || !S.groups.length) S.groups = [{ type: 'AKE', code: 'B', nums: [] }];
+
+  function bulkOwner() { return clean($('owner').value) || airlineOf(S.flight); }
+  function bulkTotal() { return S.groups.reduce((n, g) => n + g.nums.length, 0); }
+
+  // Per field: '' (fine or still empty) or the reason it can't be added.
+  function bulkStatus() {
+    const owner = bulkOwner(), seen = {};
+    return S.groups.map(g => g.nums.map(v => {
+      if (!v) return '';
+      if (!BULK_NUM.test(v)) return 'Not a ULD number';
+      const id = g.type + v + owner;
+      if (seen[id]) return 'Typed twice';
+      seen[id] = true;
+      if (S.entries.some(x => uldId(x) === id)) return id + ' is already in the list';
+      return '';
+    }));
   }
 
-  function addBulk() {
-    const toks = $('bulk').value.split(/[\s,;.]+/).filter(Boolean);
-    if (!toks.length) { setMsg('Paste some ULD numbers first.', 'err'); return; }
-    const owner = clean($('owner').value);
-    if (!/^[A-Z0-9]{2,3}$/.test(owner)) { setMsg('Owner code should be 2–3 characters, e.g. CA.', 'err'); return; }
-    let added = 0; const dupes = [], bad = [];
-    toks.forEach(t => {
-      const p = parseToken(t);
-      if (p.error) { bad.push(t); return; }
-      const u = p.uld; u.code = S.addCode;
-      const id = uldId(u);
-      if (S.entries.some(x => uldId(x) === id)) { dupes.push(id); return; }
-      S.entries.push(u); added++;
+  function setBulkMsg(text, kind) { const el = $('bulk-msg'); el.textContent = text; el.className = 'add-msg ' + (kind || ''); }
+
+  function updateBulkCells() {
+    const st = bulkStatus();
+    $('bulk-fields').querySelectorAll('.bulk-cell').forEach(c => {
+      const r = st[+c.dataset.g][+c.dataset.i];
+      c.classList.toggle('bad', !!r); c.title = r || '';
     });
-    persist();
-    const parts = ['Added ' + added];
-    if (dupes.length) parts.push(dupes.length + ' already in the list');
-    if (bad.length) parts.push('skipped: ' + bad.join(', '));
-    setMsg(parts.join(' · '), bad.length || (!added && dupes.length) ? 'err' : 'ok');
-    if (!bad.length) $('bulk').value = '';
-    renderApp();
+    const n = bulkTotal();
+    $('btn-bulk').textContent = n ? 'Add all ' + n : 'Add all';
+    $('btn-bulk').disabled = !n;
   }
+
+  function renderGroupRows() {
+    $('group-list').innerHTML = '<span class="gh">Type</span><span class="gh">Content</span><span class="gh c">How many</span><span class="gh"></span>' +
+      S.groups.map((g, gi) =>
+      '<div class="group-row" data-g="' + gi + '">' +
+        '<div class="seg mini">' + ['AKE', 'PMC', 'PLA'].map(t =>
+          '<button type="button" data-act="type" data-v="' + t + '" class="' + (t === g.type ? 'on' : '') + '">' + t + '</button>').join('') + '</div>' +
+        '<div class="seg mini codes">' + CODES.map(c =>
+          '<button type="button" data-act="code" data-v="' + c + '" data-code="' + c + '" class="' + (c === g.code ? 'on' : '') +
+          '" title="' + CODE_NAMES[c] + '">' + c + '</button>').join('') + '</div>' +
+        '<input class="g-count mono" type="number" min="0" max="' + MAX_GROUP + '" inputmode="numeric" placeholder="0" value="' +
+          (g.nums.length || '') + '" aria-label="How many">' +
+        '<button type="button" class="del" data-act="del" aria-label="Remove group"' + (S.groups.length < 2 ? ' style="visibility:hidden"' : '') + '>×</button>' +
+      '</div>').join('');
+    $('group-list').querySelectorAll('.group-row').forEach(row => {
+      const g = S.groups[+row.dataset.g];
+      row.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', () => {
+        if (b.dataset.act === 'type') g.type = b.dataset.v;
+        else if (b.dataset.act === 'code') g.code = b.dataset.v;
+        else if (b.dataset.act === 'del') S.groups.splice(+row.dataset.g, 1);
+        persist(); renderBulk();
+      }));
+      const cnt = row.querySelector('.g-count');
+      cnt.addEventListener('input', () => {
+        let n = parseInt(cnt.value, 10);
+        if (!(n > 0)) n = 0;
+        if (n > MAX_GROUP) { n = MAX_GROUP; cnt.value = n; }
+        g.nums = g.nums.slice(0, n).concat(Array(Math.max(0, n - g.nums.length)).fill(''));
+        persist(); renderBulkFields();
+        if ($('bulk-msg').classList.contains('err')) setBulkMsg('');
+      });
+      cnt.addEventListener('keydown', e => {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        // Set all the counts first, then Enter on the last count goes to the first number field.
+        const nextCount = $('group-list').querySelectorAll('.g-count')[+row.dataset.g + 1];
+        const firstField = $('bulk-fields').querySelector('input');
+        (nextCount || firstField || cnt).focus();
+      });
+    });
+  }
+
+  function renderBulkFields() {
+    const owner = bulkOwner();
+    $('bulk-fields').innerHTML = S.groups.map((g, gi) => !g.nums.length ? '' :
+      '<div class="bulk-group"><div class="bg-title"><i style="background:var(--c-' + g.code + ')"></i>' +
+        g.nums.length + ' × ' + esc(g.type) + ' · ' + CODE_NAMES[g.code] + '</div><div class="bulk-grid">' +
+        g.nums.map((v, i) =>
+          '<label class="bulk-cell" data-g="' + gi + '" data-i="' + i + '"><span class="n">' + (i + 1) + '</span>' +
+          '<span class="pre mono">' + esc(g.type) + '</span>' +
+          '<input class="mono" data-g="' + gi + '" data-i="' + i + '" value="' + esc(v) + '" inputmode="numeric" autocomplete="off" ' +
+          'spellcheck="false" maxlength="5" placeholder="number" aria-label="' + esc(g.type) + ' number ' + (i + 1) + '">' +
+          '<span class="suf mono">' + esc(owner) + '</span></label>').join('') +
+      '</div></div>').join('');
+    $('bulk-empty').classList.toggle('hidden', bulkTotal() > 0);
+    const all = Array.from($('bulk-fields').querySelectorAll('input'));
+    all.forEach((inp, k) => {
+      const g = S.groups[+inp.dataset.g], i = +inp.dataset.i;
+      inp.addEventListener('input', () => {
+        const v = inp.value.replace(/\D/g, '');
+        if (v !== inp.value) inp.value = v;
+        g.nums[i] = v; persist(); updateBulkCells();
+        if ($('bulk-msg').classList.contains('err')) setBulkMsg('');
+      });
+      inp.addEventListener('keydown', e => {
+        if (e.key !== 'Enter') return;
+        e.preventDefault();
+        if (all[k + 1]) all[k + 1].focus(); else addBulk();
+      });
+      // Pasting a list fills this field and the ones after it in the same group,
+      // adding fields to the group if needed.
+      inp.addEventListener('paste', e => {
+        const txt = (e.clipboardData || window.clipboardData).getData('text');
+        const toks = txt.split(/[^0-9]+/).filter(Boolean);
+        if (toks.length < 2) return;
+        e.preventDefault();
+        toks.slice(0, MAX_GROUP - i).forEach((t, m) => { g.nums[i + m] = t; });
+        persist(); renderBulk();
+        const last = $('bulk-fields').querySelector('input[data-g="' + inp.dataset.g + '"][data-i="' + Math.min(i + toks.length - 1, g.nums.length - 1) + '"]');
+        if (last) last.focus();
+      });
+    });
+    updateBulkCells();
+  }
+
+  function renderBulk() { renderGroupRows(); renderBulkFields(); }
+
+  function addBulk() {
+    const n = bulkTotal();
+    if (!n) { setBulkMsg('Set how many first.', 'err'); const c = $('group-list').querySelector('.g-count'); if (c) c.focus(); return; }
+    const owner = bulkOwner();
+    if (!/^[A-Z0-9]{2,3}$/.test(owner)) { setBulkMsg('Owner code should be 2–3 characters, e.g. CA.', 'err'); $('owner').focus(); return; }
+    const fieldAt = (g, i) => $('bulk-fields').querySelector('input[data-g="' + g + '"][data-i="' + i + '"]');
+    const missing = [];
+    S.groups.forEach((g, gi) => g.nums.forEach((v, i) => { if (!v) missing.push([gi, i]); }));
+    if (missing.length) {
+      setBulkMsg(missing.length + ' of ' + n + ' still empty — fill them in, or lower “How many”.', 'err');
+      fieldAt(missing[0][0], missing[0][1]).focus();
+      return;
+    }
+    const st = bulkStatus(), bad = [];
+    st.forEach((row, gi) => row.forEach((r, i) => { if (r) bad.push([gi, i, r]); }));
+    if (bad.length) {
+      const [gi, i, r] = bad[0];
+      setBulkMsg(S.groups[gi].type + ' field ' + (i + 1) + ': ' + r + (bad.length > 1 ? ' (+' + (bad.length - 1) + ' more)' : '') + '.', 'err');
+      fieldAt(gi, i).focus();
+      return;
+    }
+    S.groups.forEach(g => g.nums.forEach(v => S.entries.push({ type: g.type, num: v, owner: owner, code: g.code })));
+    const summary = S.groups.filter(g => g.nums.length).map(g => g.nums.length + ' ' + g.type + ' ' + g.code).join(', ');
+    S.groups = [{ type: 'AKE', code: 'B', nums: [] }];
+    persist();
+    renderApp();
+    setBulkMsg('Added ' + n + ' ULDs (' + summary + ').', 'ok');
+  }
+
+  $('btn-add-group').addEventListener('click', () => {
+    const last = S.groups[S.groups.length - 1];
+    S.groups.push({ type: last ? last.type : 'PMC', code: last ? last.code : 'X', nums: [] });
+    persist(); renderBulk();
+    const cs = $('group-list').querySelectorAll('.g-count'); cs[cs.length - 1].focus();
+  });
 
   $('btn-add').addEventListener('click', addOne);
   $('num').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); addOne(); } });
@@ -703,7 +880,7 @@
   $('btn-bulk').addEventListener('click', addBulk);
   $('owner').addEventListener('input', () => {
     const v = clean($('owner').value);
-    S.addOwner = v; S.ownerAuto = (v === airlineOf(S.flight)); persist(); renderBulkHelp();
+    S.addOwner = v; S.ownerAuto = (v === airlineOf(S.flight)); persist(); renderBulk();
   });
   $('owner').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('num').focus(); } });
   document.querySelectorAll('#type-seg button').forEach(b => b.addEventListener('click', () => {
@@ -740,7 +917,7 @@
     if (await confirmBox('Start over?', 'This erases the flight details and every ULD.', 'Start over', 'danger')) {
       const keepTheme = theme;
       drop(STORE); S = freshState(); persist(); save(THEME_KEY, keepTheme);
-      setMsg(''); $('bulk').value = '';
+      setMsg(''); setBulkMsg('');
       startWizard(0);
     }
   });

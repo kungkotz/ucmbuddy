@@ -18,8 +18,8 @@ installs, works offline, and your work is still there after a refresh.
 ## The whole job in five moves
 
 1. **Flight details** — flight number, registration, station, date.
-2. **Add the ULDs** — type each number, press Enter.
-3. **Stacks of empties** — paste them all in one go.
+2. **Say how many of each** — e.g. 8 AKE bags, 2 PMC cargo, 10 PMC empties.
+3. **Key in the numbers** — one field per ULD, Enter jumps to the next.
 4. **Check the list** — fix a content code or remove a ULD if needed.
 5. **Copy** — paste into Notis.
 
@@ -39,9 +39,11 @@ Open the app and tap **UCM Buddy**. A short wizard asks for one thing at a time 
 
 You can change any of these later: tap the flight line under the **UCM Buddy** title.
 
-### 2 · Add the ULDs one by one
+### 2 · Add the whole flight at once
 
-![Add ULD](screenshots/05-add.png)
+![Add several at once](screenshots/06-bulk.png)
+
+Open **Add several at once**. Each row is a group of ULDs that share a type and a content:
 
 1. Pick the **type** — AKE, PMC or PLA.
 2. Pick the **content**:
@@ -54,27 +56,25 @@ You can change any of these later: tap the flight line under the **UCM Buddy** t
    | **CSU** | Catering |
    | **X** | Empty |
 
-3. Type the **ULD number** and press **Enter**.
+3. Enter **how many**. Need another group? Tap **+ Add a group**.
+   For the flight above that's three rows: `AKE · B × 8`, `PMC · C × 2`, `PMC · X × 10`.
 
-Type and content stay selected after each one, so eight bag containers is just eight numbers and
-eight Enters. Switch the type or content only when the next group is different.
+A field appears for every ULD. Type the numbers straight off the LIR, pressing **Enter** after each —
+it jumps to the next field, and **Enter on the last one adds them all**. Any order is fine; the app sorts them.
 
-- The **owner** code is filled in from the flight. Change it for a borrowed ULD.
-- Another type or owner? Type the full ID instead, e.g. `AKH12345KL`.
-- Adding the same ULD twice is blocked.
+- **Tip:** Enter in a *How many* box jumps to the next one, so you can set all the counts first.
+- Have the numbers as text already? **Paste the list** into the first field of a group and it fills the rest.
+- A field turns **red** if the number is typed twice, already in the list, or isn't a ULD number —
+  nothing is added until it's fixed.
+- The owner code (CA) comes from the flight. Change it in the **Owner** box above if needed.
 
-### 3 · Add a stack of empties in one go
+### 3 · Adding one at a time
 
-![Add several](screenshots/06-bulk.png)
+![Add ULD](screenshots/05-add.png)
 
-A pallet of stacked empties can be ten or more ULDs. Instead of typing them one at a time:
-
-1. Set the type to **PMC** and the content to **X**.
-2. Open **Add several at once**.
-3. Type or paste all the numbers, separated by spaces, commas or new lines.
-4. Tap **Add all**.
-
-Any ULD already in the list is skipped and reported, so nothing gets added twice.
+For a single late ULD, use the **Add ULD** box at the top: pick type and content, type the number,
+press **Enter**. Type and content stay selected, so you can keep going.
+A full ID such as `AKH12345KL` also works — handy for another type or a borrowed ULD.
 
 ### 4 · Check the list
 
